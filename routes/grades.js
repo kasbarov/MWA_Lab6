@@ -19,11 +19,24 @@ router.get('/:id', function (req, res, next) {
 // post
 router.post('/', function (req, res, next) {
 
-    grades.push(req.body);
-    console.log(grades);
+    // request validation
+    req.assert('id', 'id is required').notEmpty();
+    req.assert('name', 'name is required').notEmpty();
+    req.assert('course', 'course is required').notEmpty();
+    req.assert('grade', 'grade is required').notEmpty();
 
-    res.json("SUCCESS");
+    var errors = req.validationErrors();
 
+    if (errors) {
+        console.log(errors);
+        res.json("Failed:"+errors[0].msg);
+        
+    } else {
+        grades.push(req.body);
+        console.log(grades);
+
+        res.json("SUCCESS");
+    }
 });
 
 // put
@@ -36,17 +49,17 @@ router.put('/', function (req, res, next) {
         return grade.id == id;
     });
 
-    console.log (toUpdateIndex);
+    console.log(toUpdateIndex);
 
     // item exist
-    if (toUpdateIndex>-1){
+    if (toUpdateIndex > -1) {
         grades[toUpdateIndex] = req.body;
         res.json("SUCCESS");
 
-    }else{ // item does not exist
+    } else { // item does not exist
         res.json("Item does not exist");
     }
-   
+
 
 });
 
@@ -63,16 +76,16 @@ router.delete('/:id', function (req, res, next) {
     //console.log (toUpdateIndex);
 
     // item exist
-    if (toDeleteIndex>-1){
+    if (toDeleteIndex > -1) {
 
         //remove element
         grades.splice(toDeleteIndex, 1);
         res.json("SUCCESS");
 
-    }else{ // item does not exist
+    } else { // item does not exist
         res.json("Item does not exist");
     }
-   
+
 
 });
 
